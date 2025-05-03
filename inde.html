@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Car Alooza - Cab Booking</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(145deg, #6ab1d7, #4e8bc7);
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    body.dark {
+      background: #121212;
+      color: #f1f1f1;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 30px;
+      position: relative;
+    }
+
+    body.dark .container {
+      background: #1e1e1e;
+    }
+
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      color: rgba(0, 0, 0, 0.05);
+      font-weight: bold;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #4CAF50;
+    }
+
+    label {
+      font-weight: 500;
+      margin: 10px 0 5px;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #generate-pdf {
+      background-color: #2196F3;
+    }
+
+    #generate-pdf:hover {
+      background-color: #1e88e5;
+    }
+
+    .dark-toggle {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .footer {
+      font-size: 13px;
+      text-align: center;
+      color: #888;
+      margin-top: 30px;
+    }
+
+    #admin-controls {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="watermark">Car Alooza</div>
+    <div class="dark-toggle">
+      <label><input type="checkbox" id="dark-mode-toggle"> Dark Mode</label>
+    </div>
+    <h1>Car Alooza</h1>
+
+    <!-- User Login -->
+    <div id="user-login">
+      <h2>User Login</h2>
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <select id="login-role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Login</button>
+      </form>
+      <p>Don't have an account? <a href="#" id="show-register">Register here</a></p>
+    </div>
+
+    <!-- User Registration -->
+    <div id="user-register" style="display:none;">
+      <h2>User Registration</h2>
+      <form id="register-form">
+        <input type="email" id="register-email" placeholder="Email" required>
+        <input type="password" id="register-password" placeholder="Password" required>
+        <select id="register-role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Register</button>
+      </form>
+      <p>Already have an account? <a href="#" id="show-login">Login here</a></p>
+    </div>
+
+    <!-- Ride Booking for User -->
+    <div id="ride-booking" style="display:none;">
+      <label for="car-number">Car Number:</label>
+      <input type="text" id="car-number" placeholder="MH12 AB 1234">
+
+      <label for="pickup">Pickup Location:</label>
+      <input type="text" id="pickup" placeholder="Enter pickup point">
+
+      <label for="dropoff">Drop-off Location:</label>
+      <input type="text" id="dropoff" placeholder="Enter drop-off point">
+
+      <label for="company">Car Company:</label>
+      <select id="company">
+        <option value="">Select a company</option>
+        <option value="Toyota">Toyota</option>
+        <option value="Honda">Honda</option>
+        <option value="Maruti Suzuki">Maruti Suzuki</option>
+        <option value="BMW">BMW</option>
+        <option value="Audi">Audi</option>
+        <option value="Mercedes">Mercedes</option>
+        <option value="Ford">Ford</option>
+        <option value="Chevrolet">Chevrolet</option>
+        <option value="Hyundai">Hyundai</option>
+        <option value="Kia">Kia</option>
+        <option value="Tata">Tata</option>
+        <option value="Mahindra">Mahindra</option>
+        <option value="Skoda">Skoda</option>
+        <option value="Volkswagen">Volkswagen</option>
+        <option value="MG">MG</option>
+        <option value="Renault">Renault</option>
+        <option value="Nissan">Nissan</option>
+      </select>
+
+      <label>Car Type:</label>
+      <select id="car-type">
+        <option value="">Select Type</option>
+        <option value="AC">AC</option>
+        <option value="Non AC">Non AC</option>
+      </select>
+
+      <label for="km">Kilometers:</label>
+      <input type="number" id="km" placeholder="Distance in KM">
+
+      <label for="waiting">Waiting Charges (₹):</label>
+      <input type="number" id="waiting" value="0">
+
+      <label for="night">Night Charges (₹):</label>
+      <input type="number" id="night" value="0">
+
+      <label for="toll">Toll Charges (₹):</label>
+      <input type="number" id="toll" value="0">
+
+      <label for="promo">Promo Code (Use ALOOZA10 for 10% off):</label>
+      <input type="text" id="promo">
+
+      <button onclick="calculateFare()">Calculate Fare</button>
+      <div id="result"></div>
+
+      <button id="generate-pdf" disabled onclick="generatePDF()">Generate Invoice PDF</button>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" style="display:none;">
+      <h2>Admin Dashboard</h2>
+      <p>Welcome, Admin! Below are the details of all rides.</p>
+      <div id="admin-rides"></div>
+      <div id="admin-controls">
+        <button onclick="startApp()">Start App</button>
+        <button onclick="stopApp()">Stop App</button>
+      </div>
+    </div>
+
+    <div class="footer">© 2025 Car Alooza. All rights reserved.</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script>
+    let currentUserRole = '';
+    let isAppRunning = true;
+
+    const baseRates = {
+      "Toyota": { AC: 18, "Non AC": 15 },
+      "Honda": { AC: 17, "Non AC": 14 },
+      "Maruti Suzuki": { AC: 16, "Non AC": 13 },
+      "BMW": { AC: 25, "Non AC": 20 },
+      "Audi": { AC: 24, "Non AC": 19 },
+      "Mercedes": { AC: 26, "Non AC": 21 },
+      "Ford": { AC: 17, "Non AC": 14 },
+      "Chevrolet": { AC: 16, "Non AC": 13 },
+      "Hyundai": { AC: 16, "Non AC": 13 },
+      "Kia": { AC: 15, "Non AC": 12 },
+      "Tata": { AC: 15, "Non AC": 12 },
+      "Mahindra": { AC: 18, "Non AC": 14 },
+      "Skoda": { AC: 19, "Non AC": 15 },
+      "Volkswagen": { AC: 19, "Non AC": 15 },
+      "MG": { AC: 20, "Non AC": 16 },
+      "Renault": { AC: 17, "Non AC": 13 },
+      "Nissan": { AC: 18, "Non AC": 14 }
+    };
+
+    function login() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const role = document.getElementById('login-role').value;
+
+      if (email && password) {
+        if (role === 'admin') {
+          currentUserRole = 'admin';
+          document.getElementById('user-login').style.display = 'none';
+          document.getElementById('ride-booking').style.display = 'none';
+          document.getElementById('admin-dashboard').style.display = 'block';
+        } else {
+          currentUserRole = 'user';
+          document.getElementById('user-login').style.display = 'none';
+          document.getElementById('admin-dashboard').style.display = 'none';
+          document.getElementById('ride-booking').style.display = 'block';
+        }
+      }
+    }
+
+    function showRegister() {
+      document.getElementById('user-login').style.display = 'none';
+      document.getElementById('user-register').style.display = 'block';
+    }
+
+    function showLogin() {
+      document.getElementById('user-register').style.display = 'none';
+      document.getElementById('user-login').style.display = 'block';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      login();
+    });
+
+    document.getElementById('show-register').addEventListener('click', function (e) {
+      e.preventDefault();
+      showRegister();
+    });
+
+    document.getElementById('show-login').addEventListener('click', function (e) {
+      e.preventDefault();
+      showLogin();
+    });
+
+    // Ride Booking and Fare Calculation
+    let latestDetails = {};
+    function calculateFare() {
+      const company = document.getElementById('company').value;
+      const type = document.getElementById('car-type').value;
+      const km = parseFloat(document.getElementById('km').value);
+      const waiting = parseFloat(document.getElementById('waiting').value);
+      const night = parseFloat(document.getElementById('night').value);
+      const toll = parseFloat(document.getElementById('toll').value);
+      const promo = document.getElementById('promo').value.trim();
+      const carNumber = document.getElementById('car-number').value;
+      const pickup = document.getElementById('pickup').value;
+      const dropoff = document.getElementById('dropoff').value;
+
+      if (!company || !type || isNaN(km) || !carNumber || !pickup || !dropoff) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      const rate = baseRates[company][type];
+      let fare = km * rate + waiting + night + toll;
+      let discount = 0;
+
+      if (promo.toUpperCase() === "ALOOZA10") {
+        discount = fare * 0.1;
+        fare -= discount;
+      }
+
+      latestDetails = {
+        company, type, km, waiting, night, toll, promo, discount, fare, carNumber, pickup, dropoff
+      };
+
+      document.getElementById('result').innerHTML = `Total Fare: ₹${fare.toFixed(2)} ${discount > 0 ? `(10% Promo Applied)` : ""}`;
+      document.getElementById('generate-pdf').disabled = false;
+    }
+
+    function generatePDF() {
+      const invoice = document.createElement('div');
+      invoice.innerHTML = `
+        <h2>Car Alooza - Ride Invoice</h2>
+        <p><strong>Car Number:</strong> ${latestDetails.carNumber}</p>
+        <p><strong>Pickup Location:</strong> ${latestDetails.pickup}</p>
+        <p><strong>Drop-off Location:</strong> ${latestDetails.dropoff}</p>
+        <p><strong>Company:</strong> ${latestDetails.company}</p>
+        <p><strong>Car Type:</strong> ${latestDetails.type}</p>
+        <p><strong>Kilometers:</strong> ${latestDetails.km} KM</p>
+        <p><strong>Waiting Charges:</strong> ₹${latestDetails.waiting}</p>
+        <p><strong>Night Charges:</strong> ₹${latestDetails.night}</p>
+        <p><strong>Toll Charges:</strong> ₹${latestDetails.toll}</p>
+        ${latestDetails.discount > 0 ? `<p><strong>Promo Discount:</strong> ₹${latestDetails.discount.toFixed(2)}</p>` : ""}
+        <p><strong>Total Fare:</strong> ₹${latestDetails.fare.toFixed(2)}</p>
+        <p style="margin-top:20px; font-style: italic;">Thank you for choosing Car Alooza!</p>
+      `;
+      html2pdf().from(invoice).save('CarAlooza_Invoice.pdf');
+    }
+
+    // Dark Mode Toggle
+    document.getElementById('dark-mode-toggle').addEventListener('change', function () {
+      document.body.classList.toggle('dark', this.checked);
+    });
+
+    // Admin Controls for Starting and Stopping App
+    function startApp() {
+      isAppRunning = true;
+      alert("App has started.");
+    }
+
+    function stopApp() {
+      isAppRunning = false;
+      alert("App has stopped.");
+    }
+  </script>
+</body>
+</html>
+
